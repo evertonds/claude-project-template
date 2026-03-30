@@ -1,6 +1,6 @@
 # claude-project-template
 
-Template base de configuração para projetos usando **Claude Code**. Inclui skills de boas práticas de engenharia e comandos prontos para uso em qualquer projeto de software.
+Template base de configuração para projetos usando **Claude Code**. Inclui skills de boas práticas de engenharia e comandos prontos para uso em qualquer projeto de software, com foco em segurança multi-tenant e conformidade LGPD.
 
 ---
 
@@ -8,22 +8,42 @@ Template base de configuração para projetos usando **Claude Code**. Inclui ski
 
 ```
 .claude/
-  skills/       # Conhecimento especializado carregado sob demanda
-  commands/     # Atalhos de fluxo invocados manualmente
-  settings.json # Hooks e permissões
-CLAUDE.md       # Contexto do projeto para o Claude
+  skills/       # Conhecimento especializado (Architecture, Security, Privacy, etc.)
+  commands/     # Atalhos de fluxo (/session-start, /task-done, /agents-sync)
+  settings.json # Hooks e permissões do Claude Code
+.gemini/
+  skills/       # Skills para o Gemini CLI (Auditoria, Pesquisa, Arquitetura)
+CLAUDE.md       # Contexto do projeto para o Claude (Stack, Setup, Convenções)
 GEMINI.md       # Contexto técnico para o Gemini CLI e chat âncora web
-.claudeignore   # Arquivos que o Claude deve ignorar
+CONTEXT.md      # Estado vivo do projeto (Sprint, objetivos, bloqueios)
+BACKLOG.md      # Lista de tarefas atômicas com critérios de aceite (DoR/DoD)
+SESSION_LOG.md  # Registro histórico das sessões de trabalho
 ```
 
 ---
 
-## Como usar este template
+## Como usar este template (Guia de Instanciação)
 
-1. Copie a estrutura para o seu projeto (ou use como GitHub Template Repository)
-2. Preencha o `CLAUDE.md` com o stack e convenções do seu projeto
-3. As skills serão carregadas automaticamente quando relevantes
-4. Os commands são invocados manualmente com `/nome-do-command`
+Siga este checklist ao iniciar um novo projeto baseado neste template:
+
+### 1. Setup de Arquivos
+- [ ] Criar repositório do projeto.
+- [ ] Copiar diretórios `.claude/` e `.gemini/` para a raiz.
+- [ ] Copiar `TEMPLATE_CLAUDE.md` renomeando para `CLAUDE.md`.
+- [ ] Criar `GEMINI.md` a partir do template correspondente.
+- [ ] Criar `CONTEXT.md`, `BACKLOG.md` e `SESSION_LOG.md` a partir dos seus respectivos `.template`.
+
+### 2. Configuração do Projeto (`CLAUDE.md`)
+- [ ] Definir a **Stack** (Linguagem, Framework, DB, Cloud).
+- [ ] Listar os **Comandos** reais de dev, test, build e lint.
+- [ ] Configurar **Security Tool**: Escolher e testar a ferramenta SAST (ex: `njsscan`, `bandit`, `npm audit`).
+- [ ] Preencher **Security Setup**: Configurar `MULTI_TENANT`, `AUTH_METHOD`, etc.
+- [ ] Preencher **Privacy Setup**: Definir `LEGAL_BASIS`, `RETENTION` e campos `PII_FIELDS`.
+
+### 3. Alinhamento Inicial
+- [ ] Rodar o comando `/session-start` pela primeira vez.
+- [ ] Cadastrar a primeira **Tarefa Atômica** no `BACKLOG.md`.
+- [ ] Verificar se o `.gitignore` protege segredos (como `.env`).
 
 ---
 
@@ -38,11 +58,7 @@ Skills são instruções especializadas que o Claude carrega dinamicamente. Algu
 
 **O que faz:** Guia decisões estruturais antes de codar. Inclui princípios de arquitetura, checklist pré-implementação e formato padrão para ADRs (Architecture Decision Records).
 
-**Como chamar:**
-```
-/architecture
-```
-Ou simplesmente pergunte: *"Como devo estruturar esse módulo?"* — o Claude carrega automaticamente.
+**Como chamar:** `/architecture`
 
 ---
 
@@ -51,24 +67,25 @@ Ou simplesmente pergunte: *"Como devo estruturar esse módulo?"* — o Claude ca
 
 **O que faz:** Define convenções de código, estrutura de funções, padrões de nomenclatura, tratamento de erros e checklist antes de submeter código.
 
-**Como chamar:**
-```
-/development
-```
-Ativada automaticamente em tarefas de codificação geral.
+**Como chamar:** `/development`
 
 ---
 
 ### 🔒 `security`
-**Quando usar:** Em toda e qualquer feature — segurança é transversal. Especialmente em fluxos de autenticação, endpoints de API, manipulação de dados sensíveis e integrações externas.
+**Quando usar:** Em toda e qualquer feature — segurança é transversal. Especialmente em fluxos multi-tenant, autenticação, endpoints de API e manipulação de segredos.
 
-**O que faz:** Cobre secrets, autenticação, autorização, validação de inputs, segurança de API, auditoria e OWASP Top 10.
+**O que faz:** Cobre secrets, isolamento de dados por tenant (B2B), autenticação, autorização, validação de inputs e OWASP Top 10.
 
-**Como chamar:**
-```
-/security
-```
-Ativada automaticamente em contextos de autenticação, permissões e dados sensíveis.
+**Como chamar:** `/security`
+
+---
+
+### 🔐 `privacy`
+**Quando usar:** Sempre que a tarefa tocar em dados de usuários, registros pessoais, coleta, armazenamento ou exclusão de dados.
+
+**O que faz:** Aplica princípios de *privacy-by-design* e conformidade LGPD. Inclui classificação de dados (`PERSONAL`, `SENSITIVE`), regras de retenção e minimização.
+
+**Como chamar:** `/privacy`
 
 ---
 
@@ -77,140 +94,134 @@ Ativada automaticamente em contextos de autenticação, permissões e dados sens
 
 **O que faz:** Define a pirâmide de testes, padrões de qualidade, cobertura por tipo de código, testes de contrato de API e checklist pré-merge.
 
-**Como chamar:**
-```
-/qa
-```
-Ativada automaticamente quando o contexto envolve testes.
+**Como chamar:** `/qa`
 
 ---
 
 ### 🗄️ `data`
 **Quando usar:** Ao modelar schemas, escrever migrations, otimizar queries, construir pipelines de dados ou lidar com dados sensíveis.
 
-**O que faz:** Padrões de modelagem, regras para migrations, boas práticas de queries, pipelines idempotentes, Medallion Architecture e tratamento de PII.
+**O que faz:** Padrões de modelagem, regras para migrations, boas práticas de queries, pipelines idempotentes e tratamento de PII.
 
-**Como chamar:**
-```
-/data
-```
-Ativada automaticamente ao mencionar banco de dados, migrations, queries ou ETL.
+**Como chamar:** `/data`
 
 ---
 
 ### ☁️ `cloud`
 **Quando usar:** Ao provisionar recursos, desenhar infraestrutura, revisar políticas IAM ou trabalhar com qualquer serviço cloud. **Toda infraestrutura deve usar Terraform.**
 
-**O que faz:** Padrões universais de IaC com Terraform, tagging obrigatório, IAM, secrets management, observabilidade, e seções específicas para AWS e GCP.
+**O que faz:** Padrões universais de IaC com Terraform, tagging obrigatório, IAM, secrets management e observabilidade.
 
-**Como chamar:**
-```
-/cloud
-```
-Ativada automaticamente ao mencionar AWS, GCP, Terraform ou infraestrutura.
+**Como chamar:** `/cloud`
 
 ---
 
 ### 🔁 `devops`
 **Quando usar:** Ao desenhar pipelines de CI/CD, configurar ambientes, planejar deploys ou trabalhar com Terraform em automação.
 
-**O que faz:** Estratégia de ambientes, estrutura de pipelines CI e CD, Terraform em CI/CD, gestão de secrets em pipelines, estratégia de rollback e branching.
+**O que faz:** Estratégia de ambientes, estrutura de pipelines CI/CD, gestão de secrets em pipelines e estratégia de rollback.
 
-**Como chamar:**
-```
-/devops
-```
-Ativada automaticamente em contextos de pipeline, deploy e automação.
+**Como chamar:** `/devops`
 
 ---
 
 ### 📋 `product`
 **Quando usar:** Ao definir requisitos, escrever critérios de aceite, revisar escopo ou fechar uma feature.
 
-**O que faz:** Checklist pré-implementação, formato de critérios de aceite (Given/When/Then), controle de escopo, definição de pronto e padrão de changelog.
+**O que faz:** Checklist pré-implementação, formato de critérios de aceite (Given/When/Then), controle de escopo e definição de pronto (DoD).
 
-**Como chamar:**
-```
-/product
-```
-Ativada automaticamente ao discutir requisitos ou escopo de features.
+**Como chamar:** `/product`
 
 ---
 
 ### 📝 `documentation`
-**Quando usar:** Ao escrever READMEs, ADRs, runbooks, docstrings ou changelogs. Ao finalizar um módulo ou feature.
+**Quando usar:** Ao escrever READMEs, ADRs, runbooks, docstrings ou changelogs.
 
-**O que faz:** Define quais documentos são obrigatórios por projeto, estrutura de README, padrões de documentação de código, uso de diagramas e formato de runbooks.
+**O que faz:** Define documentos obrigatórios, estrutura de README, padrões de documentação de código e uso de diagramas.
 
-**Como chamar:**
-```
-/documentation
-```
-Ativada automaticamente em tarefas de documentação.
+**Como chamar:** `/documentation`
 
 ---
 
 ### 🔗 `integrations`
 **Quando usar:** Ao integrar com APIs externas, implementar OAuth, tratar webhooks ou desenhar lógica de retry/fallback.
 
-**O que faz:** Padrões de autenticação, resiliência (retry, timeout, circuit breaker), idempotência, tratamento de webhooks, contratos de dados e testes de integração.
+**O que faz:** Padrões de autenticação, resiliência (retry, timeout, circuit breaker), idempotência e tratamento de webhooks.
 
-**Como chamar:**
-```
-/integrations
-```
-Ativada automaticamente ao mencionar APIs externas, webhooks ou serviços de terceiros.
+**Como chamar:** `/integrations`
 
 ---
 
 ### 🤖 `gemini`
-**Quando usar:** Ao tomar decisões arquiteturais, modelar domínio, realizar análise de segurança ampla, ou sempre que o contexto envolver uma escolha que se beneficia de perspectiva externa antes de implementar. Ativada também ao receber outputs prefixados com `[GEMINI ANALYSIS]` ou `[GEMINI SECURITY]`.
+**Quando usar:** Ao tomar decisões arquiteturais, modelar domínio, realizar análise de segurança ampla ou análise global do codebase.
 
-**O que faz:** Define o papel do Gemini Web (chat âncora) e do Gemini CLI no fluxo híbrido. Estabelece gatilhos para sugerir ativamente o uso do Gemini, o que não delegar, como fazer passagem de contexto e quando sincronizar o chat âncora.
+**O que faz:** Define o fluxo híbrido entre Gemini Web (Arquiteto) e Gemini CLI (Auditor). Estabelece gatilhos de sincronização e análise profunda.
 
-**Como chamar:**
-```
-/gemini
-```
-Ativada automaticamente em decisões arquiteturais, análise de segurança ampla e ao receber outputs do Gemini.
+**Como chamar:** `/gemini`
 
 ---
 
 ### 🔍 `code-review`
 **Quando usar:** Antes de abrir qualquer PR. Invoque para uma revisão sistemática cobrindo todas as dimensões de qualidade.
 
-**O que faz:** Checklist completo: segurança, correção lógica, qualidade de código, testes, dados, cloud/infra, documentação e aspectos gerais.
+**O que faz:** Checklist completo: segurança, correção lógica, qualidade de código, testes, dados, infra e documentação.
 
-**Como chamar:**
-```
-/code-review
-```
+**Como chamar:** `/code-review`
 
 ---
 
 ### 💰 `finops`
-**Quando usar:** Ao provisionar recursos cloud, revisar mudanças de infraestrutura ou avaliar opções de arquitetura com impacto em custo.
+**Quando usar:** Ao provisionar recursos cloud, revisar mudanças de infraestrutura ou avaliar impacto de custos.
 
-**O que faz:** Estimativa de custo antes de provisionar, alertas de budget, controles de custo para AWS e GCP, boas práticas de Terraform para custo e revisão periódica.
+**O que faz:** Estimativa de custo, alertas de budget, controles de custo cloud e boas práticas de Terraform para custo.
 
-**Como chamar:**
-```
-/finops
-```
-Ativada automaticamente ao mencionar custos, billing ou ao aplicar mudanças de infraestrutura em produção.
+**Como chamar:** `/finops`
 
 ---
 
 ## Commands
 
-Commands são fluxos de trabalho completos que você invoca manualmente. Diferente das skills, eles não são carregados automaticamente — você os chama quando quer executar um processo específico.
+Commands são fluxos de trabalho manuais que automatizam processos específicos do ciclo de vida do projeto.
+
+---
+
+### 🏁 `/session-start`
+**Quando usar:** No início de cada sessão de trabalho.
+
+**O que faz:** Carrega o estado atual do projeto (`CONTEXT.md`), o histórico da última sessão (`SESSION_LOG.md`) e identifica a próxima tarefa pronta no `BACKLOG.md`.
+
+```
+/session-start
+```
+
+---
+
+### ✅ `/task-done`
+**Quando usar:** Ao finalizar uma tarefa para rodar os gates de qualidade e realizar o commit.
+
+**O que faz:** Executa auto-avaliação (scoring), roda o SAST (ferramenta de segurança), gera mensagem de commit (Conventional Commits), exibe o diff e atualiza os logs de sessão e backlog.
+
+```
+/task-done TASK-XXX
+```
+
+---
+
+### 🔄 `/agents-sync`
+**Quando usar:** Após decisões arquiteturais significativas, novos ADRs ou mudanças no stack para sincronizar os chats âncora.
+
+**O que faz:** Gera um bloco de atualização de alta densidade para o Gemini Web e Claude Web, mantendo os modelos mentais dos agentes externos sincronizados.
+
+```
+/agents-sync
+```
 
 ---
 
 ### ✨ `/new-feature`
-**Quando usar:** No início de qualquer feature nova, antes de escrever a primeira linha de código.
+**Quando usar:** No início de qualquer feature nova, antes de codar.
 
-**O que faz:** Guia você pelo processo completo de início de feature — clareza de escopo, planejamento de arquivos afetados, identificação de skills relevantes e criação de branch.
+**O que faz:** Guia o planejamento inicial — clareza de escopo, arquivos afetados, identificação de skills e criação de branch.
 
 ```
 /new-feature
@@ -221,7 +232,7 @@ Commands são fluxos de trabalho completos que você invoca manualmente. Diferen
 ### ✅ `/pre-commit`
 **Quando usar:** Antes de qualquer commit ou abertura de PR.
 
-**O que faz:** Checklist de qualidade pré-commit — lint, testes, typecheck, audit de dependências e validação manual do diff.
+**O que faz:** Checklist rápido de qualidade pré-commit — lint, testes, typecheck e auditoria básica.
 
 ```
 /pre-commit
@@ -232,7 +243,7 @@ Commands são fluxos de trabalho completos que você invoca manualmente. Diferen
 ### 🚀 `/deploy-checklist`
 **Quando usar:** Antes de qualquer deploy em staging ou produção.
 
-**O que faz:** Verificação completa pré-deploy — testes, infraestrutura Terraform, migrations, observabilidade e plano de rollback. Inclui checklist pós-deploy para os primeiros 15 minutos.
+**O que faz:** Verificação completa pré-deploy — testes, infra, migrations, observabilidade e plano de rollback.
 
 ```
 /deploy-checklist
@@ -241,9 +252,9 @@ Commands são fluxos de trabalho completos que você invoca manualmente. Diferen
 ---
 
 ### 🐛 `/debug`
-**Quando usar:** Ao investigar um bug, comportamento inesperado ou incidente em produção.
+**Quando usar:** Ao investigar bugs ou incidentes.
 
-**O que faz:** Fluxo estruturado de debugging — reprodução, coleta de evidências, hipótese, isolamento, correção e documentação. Evita a armadilha de mudanças aleatórias.
+**O que faz:** Fluxo estruturado de debugging — reprodução, coleta de evidências, hipótese e isolamento da causa raiz.
 
 ```
 /debug
@@ -252,68 +263,36 @@ Commands são fluxos de trabalho completos que você invoca manualmente. Diferen
 ---
 
 ### 👀 `/review`
-**Quando usar:** Antes de abrir um PR. Versão acionável do `code-review` skill.
+**Quando usar:** Antes de abrir um PR.
 
-**O que faz:** Executa a skill de code-review contra o diff atual ou arquivo especificado, retornando um checklist com ✅ / ❌ / ⚠️ e um resumo de bloqueadores.
+**O que faz:** Executa a skill de code-review contra o diff atual ou arquivo especificado, gerando um checklist de bloqueadores.
 
 ```
 /review
-/review src/module/arquivo.py
 ```
 
 ---
 
-### 🔭 `/gemini-analyze`
-**Quando usar:** Ao querer uma visão global do codebase — inconsistências arquiteturais, débito técnico, violações de convenção — sem precisar chunkar arquivos manualmente.
+### 🔭 `/gemini-analyze` & 🔐 `/gemini-security`
+**Quando usar:** Para análise global do repositório ou revisão profunda de segurança via Gemini CLI (janela de 1M tokens).
 
-**O que faz:** Invoca o Gemini CLI com a janela de 1M tokens para analisar o repositório inteiro ou um módulo específico. Retorna findings estruturados sobre arquitetura, débito técnico e inconsistências, prefixados com `[GEMINI ANALYSIS]`.
+**O que faz:** Invocam o Gemini CLI para mapear débito técnico, inconsistências arquiteturais ou vulnerabilidades OWASP complexas.
 
 ```
 /gemini-analyze
-/gemini-analyze src/payments
-```
-
----
-
-### 🔐 `/gemini-security`
-**Quando usar:** Antes de abrir um PR com mudanças sensíveis, ou ao revisar um módulo crítico de segurança.
-
-**O que faz:** Invoca o Gemini CLI para revisão de segurança focada em OWASP Top 10, multi-tenancy e secrets. Cobre o diff atual ou um módulo específico. Findings retornam com severidade (CRITICAL / HIGH / MEDIUM / LOW) e recomendação de fix, prefixados com `[GEMINI SECURITY]`.
-
-```
 /gemini-security
-/gemini-security src/auth
-```
-
----
-
-### 🔄 `/gemini-sync`
-**Quando usar:** Após decisões arquiteturais significativas, adição de novos módulos, ou atualização do `GEMINI.md`.
-
-**O que faz:** Gera um bloco estruturado de atualização para colar no chat âncora do Gemini Web, mantendo o arquiteto externo sincronizado com o estado atual do projeto. Inclui mudanças recentes, ADRs aceitos e contexto para próximas discussões.
-
-```
-/gemini-sync
 ```
 
 ---
 
 ## Customizando para seu projeto
 
-Ao usar este template em um novo projeto, preencha o `CLAUDE.md` com:
-
-- **Stack** — linguagens, frameworks, banco de dados, cloud
-- **Commands** — comandos reais de dev, test, build e lint do projeto
-- **Conventions** — padrões específicos do time
-- **Do Not Touch** — arquivos críticos que o Claude não deve modificar
-- **Known Errors** — erros recorrentes que já foram identificados e como evitá-los
-
-As skills não precisam de modificação para a maioria dos projetos — são intencionalmente genéricas.
+Ao usar este template, preencha o `CLAUDE.md` com os detalhes específicos do seu projeto (Stack, Commands reais, Conventions e Known Errors). As skills e commands de fluxo fornecidos são agnósticos e projetados para funcionar em qualquer stack moderna.
 
 ---
 
 ## Referências
 
-- [anthropics/skills](https://github.com/anthropics/skills) — Repositório oficial de Agent Skills da Anthropic
-- [Claude Code Docs — Skills](https://code.claude.com/docs/en/skills) — Documentação oficial
-- [agentskills.io](https://agentskills.io) — Especificação aberta do padrão Agent Skills
+- [Claude Code Docs](https://code.claude.com/docs)
+- [Gemini CLI Documentation](https://github.com/google/gemini-cli)
+- [LGPD - Lei Geral de Proteção de Dados](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)

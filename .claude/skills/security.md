@@ -5,40 +5,75 @@ description: Apply security best practices across all layers. Use this skill on 
 
 # Security
 
-## Non-Negotiables
-- Never hardcode secrets, tokens, passwords, or API keys in code
-- Secrets always via environment variables or secret managers
-- Never log sensitive data: tokens, passwords, PII, financial data
+## 1. Universal Rules (always apply)
+
+- Never log PII in application or debug logs. In audit logs, use unique identifiers (UUIDs) to track who did what — never expose personal data in plain text.
+- Never hardcode secrets, tokens, passwords, or API keys — always use environment variables or a secret manager
 - Never commit `.env` files — ensure `.gitignore` covers them
-
-## Authentication & Authorization
-- Always validate authentication on the backend — never trust frontend alone
-- Implement authorization checks at the function/service level, not just routes
-- Use principle of least privilege for all roles and permissions
-- Multi-tenant systems: always filter by tenant identifier — never expose cross-tenant data
-- Define token expiration and refresh strategies upfront
-
-## Input Validation
-- Validate and sanitize all inputs at the entry point
+- Validate and sanitize all external inputs at the entry point (user input, API payloads, file uploads, query strings)
+- Enforce authentication before any data access — never trust frontend-only validation
 - Use parameterized queries / ORM — never raw string interpolation in SQL
-- Validate file uploads: type, size, and content
-- Reject unexpected fields in API payloads (strict schema validation)
+- Use principle of least privilege for all roles and permissions
 
-## API Security
-- Rate limiting on all public endpoints
-- CORS configured explicitly — never wildcard `*` in production
-- HTTPS only in production
-- Sensitive operations require re-authentication or confirmation
+### OWASP Top 10 Checklist
 
-## Dependencies
-- Never install packages without verifying source and maintenance status
-- Regularly check for known vulnerabilities (`pip audit`, `npm audit`)
-- Pin dependency versions in production
+Apply this checklist on every task that touches the areas below:
 
-## Audit & Logging
-- Log security-relevant events: login, permission denied, data export, admin actions
-- Logs must include: timestamp, user/session id, action, resource — never the sensitive value itself
+| Area | Controls to verify |
+|---|---|
+| Auth flows | Broken Auth (A07), Security Misconfiguration (A05) |
+| Data access | Broken Access Control (A01), Sensitive Data Exposure (A02) |
+| File upload | Insecure Deserialization (A08), validate type, size, and content |
+| External integrations | Injection (A03), Known Vulnerabilities (A06), SSRF (A10) |
 
-## OWASP Top 10 Awareness
-Always consider: Injection, Broken Auth, Sensitive Data Exposure, Broken Access Control,
-Security Misconfiguration, XSS, Insecure Deserialization, Known Vulnerabilities, Insufficient Logging.
+---
+
+## 2. Multi-tenancy Rules
+
+<!-- Configure in CLAUDE.md: MULTI_TENANT=true/false -->
+<!-- If MULTI_TENANT=false, this section is informational only. -->
+
+- Every query that accesses tenant-scoped data **must** filter by tenant identifier
+- Tenant identifier **must** come from the authenticated token — never from user input or request body
+- Never expose or leak data from one tenant to another
+- Isolation must be enforced at the service/repository layer, not just at the route layer
+- Log cross-tenant access attempts as security events
+
+---
+
+## 3. SAST Gate
+
+<!-- Configure in CLAUDE.md: SECURITY_TOOL -->
+<!-- Set the tool and run command for this project's stack. -->
+
+- Run SAST before every commit (invoked by `/task-done` Gate 2)
+- Block on any finding with severity **HIGH** or **CRITICAL** — do not commit until resolved
+- Downgrading severity to bypass the gate is not allowed
+
+### Examples by stack (reference — configure the actual command in CLAUDE.md)
+
+```
+# Python
+bandit -r ./src
+
+# Node / TypeScript
+njsscan . && npm audit
+
+# TypeScript (type check)
+tsc --noEmit
+
+# Go
+gosec ./...
+```
+
+---
+
+## 4. Project-Specific Rules
+
+<!-- Fill in the fields below in this project's CLAUDE.md under "Security Setup". -->
+<!-- This section is intentionally empty in the template. -->
+
+- **Authentication method:** <!-- ex: JWT / session cookie / OAuth2 -->
+- **Authorization model:** <!-- ex: RBAC / ABAC / row-level security -->
+- **Sensitive data types in this project:** <!-- ex: CPF, CREA, bank account numbers -->
+- **Known attack vectors for this domain:** <!-- ex: IDOR on resource IDs, price tampering, privilege escalation via role endpoint -->

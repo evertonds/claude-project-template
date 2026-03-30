@@ -95,3 +95,18 @@ O usuário já validou o output antes de trazer — não questionar a fonte, imp
 - Híbrido (BACKLOG.md): campos e estrutura em inglês, conteúdo preenchido em português
 
 - Em caso de dúvida: se um humano vai ler pra decidir → português. Se um modelo vai ler pra executar → inglês.
+
+## Security Setup
+
+MULTI_TENANT: <!-- true | false -->
+SECURITY_TOOL: <!-- ex: njsscan . && npm audit && tsc --noEmit -->
+AUTH_METHOD: <!-- ex: JWT -->
+SENSITIVE_DATA: <!-- ex: email, nome do usuário -->
+
+## Privacy Setup
+
+LEGAL_BASIS: <!-- contrato | consentimento | legítimo interesse | obrigação legal -->
+DATA_SUBJECTS: <!-- ex: funcionários de empresas clientes -->
+PII_FIELDS: <!-- ex: nome, email, cargo -->
+RETENTION: <!-- ex: vigência do contrato + 5 anos -->
+REGULATORY: <!-- ex: ANPD | IBAMA | ANM | FEAM | IEF -->

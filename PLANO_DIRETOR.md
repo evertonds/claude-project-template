@@ -161,5 +161,32 @@ O objetivo é garantir que o Claude Code nunca comece uma tarefa sem saber exata
 
 ---
 
-*Documento mantido por Everton. Última atualização: 2026-03-29.*
+## 9. Guia de Instanciação (Checklist)
+
+Este checklist deve ser seguido ao iniciar qualquer novo projeto baseado neste template.
+
+### Fase 1: Setup de Arquivos
+- [ ] Criar repositório do projeto.
+- [ ] Copiar diretórios `.claude/` e `.gemini/` para a raiz.
+- [ ] Copiar `TEMPLATE_CLAUDE.md` renomeando para `CLAUDE.md`.
+- [ ] Criar `GEMINI.md` a partir do template (se houver) ou copiar as diretrizes de workflow híbrido.
+- [ ] Criar `CONTEXT.md`, `BACKLOG.md` e `SESSION_LOG.md` a partir dos seus respectivos `.template`.
+
+### Fase 2: Configuração do Projeto (`CLAUDE.md`)
+- [ ] Definir a **Stack** (Linguagem, Framework, DB, Cloud).
+- [ ] Listar os **Comandos** básicos de dev, test e lint.
+- [ ] Configurar **Security Tool**:
+    - Escolher a ferramenta (ex: `njsscan`, `bandit`, `gosec`).
+    - Validar se o comando roda no ambiente atual.
+- [ ] Preencher **Security Setup**: `MULTI_TENANT`, `AUTH_METHOD`, etc.
+- [ ] Preencher **Privacy Setup**: `LEGAL_BASIS`, `RETENTION`, `PII_FIELDS`.
+
+### Fase 3: Alinhamento Inicial
+- [ ] Rodar o comando `/session-start` pela primeira vez para validar se o Claude consegue ler os arquivos de contexto.
+- [ ] Cadastrar a primeira **Tarefa Atômica** no `BACKLOG.md`.
+- [ ] Verificar se o `.gitignore` protege segredos (como `.env`).
+
+---
+
+*Documento mantido por Everton. Última atualização: 2026-03-30.*
 *Gerado inicialmente pelo Gemini CLI como Arquiteto Sênior.*
