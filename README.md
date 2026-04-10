@@ -9,12 +9,12 @@ Template base de configuração para projetos usando **Claude Code**. Inclui ski
 ```
 .claude/
   skills/       # Conhecimento especializado (Architecture, Security, Privacy, etc.)
-  commands/     # Atalhos de fluxo (/session-start, /task-done, /agents-sync)
+  commands/     # Atalhos de fluxo (/session-start, /task-done, /sync)
   settings.json # Hooks e permissões do Claude Code
 .gemini/
   skills/       # Skills para o Gemini CLI (Auditoria, Pesquisa, Arquitetura)
 CLAUDE.md       # Contexto do projeto para o Claude (Stack, Setup, Convenções)
-GEMINI.md       # Contexto técnico para o Gemini CLI e chat âncora web
+GEMINI.md       # Contexto técnico para o Gemini CLI (janela de 1M tokens)
 CONTEXT.md      # Estado vivo do projeto (Sprint, objetivos, bloqueios)
 BACKLOG.md      # Lista de tarefas atômicas com critérios de aceite (DoR/DoD)
 SESSION_LOG.md  # Registro histórico das sessões de trabalho
@@ -153,9 +153,9 @@ Skills são instruções especializadas que o Claude carrega dinamicamente. Algu
 ---
 
 ### 🤖 `gemini`
-**Quando usar:** Ao tomar decisões arquiteturais, modelar domínio, realizar análise de segurança ampla ou análise global do codebase.
+**Quando usar:** Ao tomar decisões arquiteturais, modelar domínio, realizar análise de segurança ampla ou análise global do codebase via Gemini CLI.
 
-**O que faz:** Define o fluxo híbrido entre Gemini Web (Arquiteto) e Gemini CLI (Auditor). Estabelece gatilhos de sincronização e análise profunda.
+**O que faz:** Define o fluxo de trabalho com o Gemini CLI (Auditor/Arquiteto). Estabelece gatilhos de sincronização (/sync) e análise profunda.
 
 **Como chamar:** `/gemini`
 
@@ -199,7 +199,7 @@ Commands são fluxos de trabalho manuais que automatizam processos específicos 
 ### ✅ `/task-done`
 **Quando usar:** Ao finalizar uma tarefa para rodar os gates de qualidade e realizar o commit.
 
-**O que faz:** Executa auto-avaliação (scoring), roda o SAST (ferramenta de segurança), gera mensagem de commit (Conventional Commits), exibe o diff e atualiza os logs de sessão e backlog.
+**O que faz:** Executa auto-avaliação (scoring), roda o ADR check, o SAST (ferramenta de segurança), gera mensagem de commit (Conventional Commits), exibe o diff e atualiza os logs de sessão e backlog.
 
 ```
 /task-done TASK-XXX
@@ -207,13 +207,13 @@ Commands são fluxos de trabalho manuais que automatizam processos específicos 
 
 ---
 
-### 🔄 `/agents-sync`
-**Quando usar:** Após decisões arquiteturais significativas, novos ADRs ou mudanças no stack para sincronizar os chats âncora.
+### 🔄 `/sync`
+**Quando usar:** Após decisões arquiteturais significativas, novos ADRs ou mudanças no stack para atualizar o contexto do projeto.
 
-**O que faz:** Gera um bloco de atualização de alta densidade para o Gemini Web e Claude Web, mantendo os modelos mentais dos agentes externos sincronizados.
+**O que faz:** Atualiza o `CONTEXT.md` com o estado atual (sprint, decisões, bloqueios) e realiza o append no `SESSION_LOG.md`.
 
 ```
-/agents-sync
+/sync
 ```
 
 ---

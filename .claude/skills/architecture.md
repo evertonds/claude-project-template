@@ -20,12 +20,15 @@ description: Guide structural decisions before coding. Use when starting a new f
 5. Get alignment before writing code
 
 ## ADR Format
-```
-## ADR-[N]: [Title]
-**Status**: Proposed | Accepted | Deprecated
-**Context**: Why this decision is needed
-**Decision**: What was decided
-**Consequences**: Trade-offs and implications
+Every significant decision must be recorded in its own file: `docs/decisions/ADR-[N].md`.
+
+```markdown
+# ADR-[N]: [Title]
+
+**Status**: Proposed | Accepted | Deprecated | Superseded by ADR-[X]
+**Context**: Why this decision is needed. What problem are we solving? What are the constraints?
+**Decision**: What was decided. What is the chosen solution?
+**Consequences**: What are the trade-offs? What are the implications for the future?
 ```
 
 ## Patterns to Prefer

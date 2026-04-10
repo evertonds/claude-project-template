@@ -1,15 +1,16 @@
 ---
 name: devops
-description: Apply CI/CD, deployment, and environment management standards. Use when designing pipelines, configuring environments, planning deployments, or working with Terraform in CI/CD. Invoke when the user asks about automation, branching strategy, deploy process, or rollback procedures.
+description: Apply CI/CD, deployment, and environment management standards. Use when designing pipelines, configuring environments, planning deployments. Invoke when the user asks about automation, branching strategy, deploy process, or rollback procedures.
 ---
 
 # DevOps
 
 ## Core Principles
-- Everything as code: pipelines, infrastructure (Terraform), configuration
+- Everything as code: pipelines, configuration
 - No manual deployments in staging or production
 - Every merge to main triggers the pipeline
 - Fast feedback: pipelines should complete under 10 minutes ideally
+- For IaC and cloud infrastructure rules (Terraform), see cloud skill.
 
 ## Environment Strategy
 - **dev**: local or ephemeral — fast iteration, mocks allowed
@@ -26,15 +27,9 @@ description: Apply CI/CD, deployment, and environment management standards. Use 
 ## CD Pipeline (on merge to main)
 1. All CI steps
 2. Integration tests
-3. `terraform plan` (infra changes)
-4. Deploy to staging → smoke tests
-5. Manual approval gate → deploy to prod
-6. Post-deploy health check
-
-## Terraform in CI/CD
-- `terraform fmt` and `terraform validate` on every PR
-- `terraform plan` output posted as PR comment
-- `terraform apply` only via CD pipeline — never locally in production
+3. Deploy to staging → smoke tests
+4. Manual approval gate → deploy to prod
+5. Post-deploy health check
 
 ## Secrets in Pipelines
 - Use CI/CD native secret stores (GitHub Actions Secrets, etc.)

@@ -1,6 +1,6 @@
 ---
 name: task-done
-description: Runs the three-gate completion flow for a task — quality scoring, SAST, then commit. Invoke with /task-done when you believe a task is fully implemented.
+description: Runs the completion flow for a task — quality scoring, SAST, ADR check, then commit. Invoke with /task-done when you believe a task is fully implemented.
 ---
 
 # /task-done
@@ -17,6 +17,9 @@ If not found, stop and report:
 If the task status is not `PRONTO`, stop and report:
 > "Task [TASK-XXX] has status [current status]. Only PRONTO tasks can be started via /task-done."
 
+**Gate 0 Assumption:**
+This command assumes Gate 0 (Gemini `/review`) has been completed and approved by the user. Proceed only after Gemini approval.
+
 Update the task status in `BACKLOG.md`:
 
 ```
@@ -28,7 +31,7 @@ Confirm to the user:
 
 ---
 
-Three sequential gates. Each gate can block progress.
+Sequential gates. Each gate can block progress.
 
 ---
 
@@ -73,7 +76,28 @@ Skip if: no tool configured in CLAUDE.md.
 
 **If a blocking finding is detected — BLOCK:**
 > Report the finding (tool, severity, location).
-> Stop here. Do not proceed to Gate 3.
+> Stop here. Do not proceed to Gate 2.5.
+
+---
+
+## Gate 2.5 — ADR (Architectural Decision Record)
+
+Ask the user:
+> "Esta task gerou uma decisão arquitetural significativa? (sim/não)"
+
+**If yes:**
+1. Generate an ADR block following the `architecture` skill format:
+   - **Status**: Accepted
+   - **Context**: Reason for the decision in this task
+   - **Decision**: What was decided/implemented
+   - **Consequences**: Identified trade-offs
+2. Identify the ADR path (configured in `ADR_PATH` in CLAUDE.md, default: `docs/decisions/ADR-[N].md`).
+3. Create/update the file with the new ADR block.
+4. Inform the user:
+   > "ADR gerado e salvo em [path]. Proseguindo para o Gate 3..."
+
+**If no:**
+   > "Nenhuma decisão arquitetural registrada. Proseguindo para o Gate 3..."
 
 ---
 
@@ -112,22 +136,20 @@ Ask the user:
 
 ### 3c. Append to SESSION_LOG.md
 
-Only after explicit "sim" confirmation. Append a new session block to `SESSION_LOG.md` (in Portuguese):
+Only after explicit "sim" confirmation. Append a new session block to `SESSION_LOG.md` (in Portuguese) prefixing the title with `[CLAUDE]`:
 
 ```
-## Sessão YYYY-MM-DD
+## [CLAUDE] Sessão YYYY-MM-DD HH:MM
 
-**Data e hora de início:** [start of this session]
-**Data e hora de fim:**    YYYY-MM-DD HH:MM
 **Sprint:** [from CONTEXT.md]
 **Branch:** [current git branch]
+**Tarefa:** TASK-XXX — [description]
+**Score Gate 1:** X.X/10
 **Executado por:** Claude Code
 
-### Tarefas Concluídas
+### Implementado
 
-| ID       | Descrição resumida | Score de Qualidade |
-|----------|--------------------|--------------------|
-| TASK-XXX | [description]      | X.X/10             |
+[Summary of implementation]
 
 ### O que Falhou e Por Quê
 

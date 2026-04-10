@@ -21,6 +21,11 @@ description: Apply cloud infrastructure standards for AWS and GCP. Use when prov
 - Pin provider versions in `required_providers`
 - Include cost estimate in PRs for infra changes when possible
 
+## Terraform in CI/CD (Automation)
+- `terraform fmt` and `terraform validate` on every PR
+- `terraform plan` output posted as PR comment
+- `terraform apply` only via CD pipeline — never locally in production
+
 ## Tagging / Labeling (mandatory on all resources)
 ```
 project    = "[project-name]"

@@ -74,13 +74,13 @@ When the user brings a Gemini output, it will be prefixed with one of the follow
 - `[GEMINI ANALYSIS]` — Architectural or structural analysis (Technical English).
 - `[GEMINI SECURITY]` — Security findings and risks (Technical English).
 - `[GEMINI RESEARCH]` — External facts, documentation, and search results (Technical English).
-- `[GEMINI DOMAIN]` — Business rules, logic, and domain constraints (Português de Negócio).
+- `[GEMINI DOMAIN]` — Business rules, logic, and domain constraints (Business Portuguese).
 
 Treat these as pre-validated context. Use them directly as input for implementation decisions without reprocessing.
 
 ### Language Strategy in Handoffs
 - **English**: For technical patterns, architecture, logic, and terminal commands.
-- **Português**: Para regras de negócio, fluxos de domínio, labels de interface e mensagens ao usuário.
+- **Portuguese**: For business rules, domain flows, UI labels, and user messages.
 
 ## Anchor Chat Synchronization
 

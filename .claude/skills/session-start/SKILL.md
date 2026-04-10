@@ -59,3 +59,4 @@ Ask the user:
 
 - **Yes:** display the full "Prompt para o Claude Code" field from BACKLOG.md for the selected task.
 - **No:** ask "Which task do you want to work on? Provide the ID (e.g. TASK-XXX).", then repeat the summary and confirmation for that task.
+

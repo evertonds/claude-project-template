@@ -13,7 +13,7 @@
 
 ### Gaps e Inconsistências Identificados
 1. **Fragmentação de Segurança:** Regras de segurança espalhadas entre 3 arquivos diferentes, facilitando negligências.
-2. **Perda de Memória:** O fluxo /agents-sync é manual e propenso a falhas; não há registro do "porquê" das mudanças entre sessões.
+2. **Perda de Memória:** Falta de um fluxo de sincronização contínuo; não há registro do "porquê" das mudanças entre sessões.
 3. **Tarefas Monolíticas:** Falta uma definição de "Tarefa Atômica", levando o Claude Code a tentar mudanças grandes demais.
 4. **Silêncio sobre LGPD:** Nenhuma regra de classificação de dados ou privacidade por design implementada.
 5. **Validação Fraca:** O processo de commit atual aceita avisos de segurança sem bloquear o fluxo.
@@ -25,18 +25,17 @@
 O objetivo é garantir que o Claude Code nunca comece uma tarefa sem saber exatamente onde o Gemini parou.
 
 ### Hierarquia de Granularidade
-1. **Épico** (Gemini Web): Definição de Produto e Regras de Negócio.
-2. **Feature** (Gemini Web/CLI): Decomposição em tarefas técnicas e ADRs.
+1. **Épico** (Gemini CLI): Definição de Produto e Regras de Negócio.
+2. **Feature** (Gemini CLI): Decomposição em tarefas técnicas e ADRs.
 3. **Tarefa Atômica** (Claude Code): Execução técnica.
    - **Regra de Ouro:** Máximo 1 responsabilidade funcional e alteração de no máximo 1 arquivo principal de lógica por tarefa.
 
 ### Papéis dos Agentes
 | Agente | Papel | Responsabilidade |
 |---|---|---|
-| Gemini Web | Arquiteto + QA | Planejamento, breakdown, scoring de tarefas críticas |
+| Gemini CLI | Arquiteto + Auditor | Planejamento, breakdown, scoring de tarefas críticas (/review), análise de codebase completo, segurança OWASP |
 | Claude Code | Engenheiro Sênior | Implementação de tarefas atômicas |
 | Claude.ai | Consultor Estratégico | Contexto, processo, decisões arquiteturais difusas |
-| Gemini CLI | Auditor | Análise de codebase completo, segurança OWASP |
 
 ### Arquivos de Memória Viva (por projeto — não no template)
 - **CONTEXT.md:** Estado atual do projeto (Sprint, decisões críticas, bloqueios). Norte para qualquer IA que entre no projeto.
@@ -102,7 +101,7 @@ O objetivo é garantir que o Claude Code nunca comece uma tarefa sem saber exata
 
 ---
 
-## 5. Scoring de Qualidade (Dual)
+### 5. Scoring de Qualidade (Dual)
 
 - **Nível 1 — Auto-avaliação Claude** (toda tarefa):
   - Cobertura de Testes: peso 3
@@ -115,7 +114,23 @@ O objetivo é garantir que o Claude Code nunca comece uma tarefa sem saber exata
 
 ---
 
-## 6. Decisões Validadas
+## 6. Estratégia de Arquivamento de Logs (Rolling Archive)
+
+Para evitar que o arquivo `SESSION_LOG.md` cresça indefinidamente e prejudique a janela de contexto das IAs, adotamos a estratégia de **Rolling Archive**:
+
+1.  **Gatilho:** Quando o arquivo atingir ~50 sessões registradas ou ~100KB de tamanho.
+2.  **Ação de Arquivamento:**
+    *   Renomear o arquivo atual para `memory/session_logs/SESSION_LOG_YYYYMMDD_to_YYYYMMDD.md` (usando as datas da primeira e última sessão do arquivo).
+    *   Criar um novo `SESSION_LOG.md` na raiz.
+3.  **Preservação de Contexto:**
+    *   O novo arquivo deve obrigatoriamente iniciar com o transporte das **últimas 3 sessões** do arquivo anterior.
+    *   Isso garante que o comando `/session-start` do Claude Code continue tendo visibilidade do histórico imediato sem carregar o peso de meses de projeto.
+4.  **Execução:** Manual (pelo usuário) ou assistida por comando (futuro), sempre documentando o arquivamento na primeira sessão do novo log.
+
+---
+
+## 7. Decisões Validadas
+
 
 | # | Decisão | Status |
 |---|---|---|

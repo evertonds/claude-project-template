@@ -35,5 +35,4 @@ description: Apply coding conventions and daily development standards. Use when 
 - Ensure no hardcoded values that should be config
 
 ## Commit Workflow
-- **Always ask the user to test the changes before committing.** Never run `git commit` or `git add` without first pausing and asking: "Pode testar e me confirmar se está funcionando?"
-- Only proceed with the commit after explicit user confirmation that the test passed.
+- Commit flow is managed by /task-done skill. Do not duplicate here.

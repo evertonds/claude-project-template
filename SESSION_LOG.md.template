@@ -4,52 +4,44 @@
   Escrito em Português. Append-only: nunca edite blocos anteriores.
   Cada sessão adiciona um novo bloco ao FINAL do arquivo.
 
-  QUEM ESCREVE: Claude Code, ao executar /task-done (etapa final).
-  QUEM LÊ: /session-start lê o último bloco para contextualizar a próxima sessão.
+  QUEM ESCREVE: 
+  - Claude Code, ao executar /task-done (etapa final) -> Prefixo [CLAUDE]
+  - Gemini CLI, ao executar /sync (planejamento/revisão) -> Prefixo [GEMINI]
 
   AMBIGUIDADES REGISTRADAS:
-  - "Data e hora" usa o fuso horário local do desenvolvedor (não UTC),
-    pois os logs são para revisão humana.
-  - "O que falhou" deve ser preenchido mesmo que nada tenha falhado,
-    com o valor "Nenhuma falha registrada." para manter consistência de parsing.
-  - Não há limite definido de tamanho do arquivo. Se crescer demais,
-    arquive blocos antigos em SESSION_LOG_YYYY.md mantendo os últimos 30 dias aqui.
+  - "Data e hora" usa o fuso horário local do desenvolvedor (não UTC).
+  - "O que falhou" deve ser preenchido mesmo que nada tenha falhado ("Nenhuma falha registrada").
+  - Estratégia de Rolling Archive: arquivar a cada ~50 sessões.
 -->
 
 # Session Log
 
 ---
 
-<!--
-  === TEMPLATE DE BLOCO (copie para cada nova sessão) ===
+## [CLAUDE] Sessão YYYY-MM-DD HH:MM
 
-## Sessão YYYY-MM-DD
-
-**Data e hora de início:** YYYY-MM-DD HH:MM
-**Data e hora de fim:**    YYYY-MM-DD HH:MM
 **Sprint:** Sprint ##
 **Branch:** <!-- ex: feat/TASK-001-tenant-middleware -->
-**Executado por:** Claude Code / Everton
+**Tarefa:** TASK-XXX — <!-- descrição em uma linha -->
+**Score Gate 1:** X.X/10
+**Executado por:** Claude Code
 
-### Tarefas Concluídas
+### Implementado
 
-| ID       | Descrição resumida                  | Score de Qualidade |
-|----------|-------------------------------------|--------------------|
-| TASK-XXX | <!-- descrição em uma linha -->     | X.X/10             |
+<!-- Resumo técnico do que foi codificado, arquivos alterados e testes rodados. -->
 
 ### O que Falhou e Por Quê
 
-<!--
-  Descreva falhas de execução, bloqueios encontrados, comandos que não
-  funcionaram, ou decisões que precisaram ser revertidas.
-  Se nenhuma falha: escreva "Nenhuma falha registrada."
+<!-- 
+  Descreva falhas de execução, bloqueios, comandos que não funcionaram, 
+  ou por que o score foi baixo inicialmente. 
+  Se nenhuma falha: "Nenhuma falha registrada."
 -->
 
 ### Decisões Tomadas
 
-<!--
-  Liste decisões técnicas ou de produto tomadas NESTA sessão.
-  Formato: decisão · motivo · impacto esperado
+<!-- 
+  Decisões técnicas locais de implementação. 
   Se nenhuma: "Nenhuma decisão nova."
 -->
 
@@ -57,50 +49,36 @@
 
 ### Próximo Passo
 
-<!--
-  A tarefa prioritária para a PRÓXIMA sessão.
-  Deve corresponder ao ID e resumo de um item PRONTO no BACKLOG.md.
--->
-
-**Tarefa:** TASK-XXX — <!-- descrição em uma linha -->
-**Observação:** <!-- contexto adicional para quem abrir a próxima sessão -->
-
----
--->
-
-## Exemplo Preenchido
-
-> ⚠️ Este bloco é apenas referência — remova antes de usar em produção.
+**Tarefa:** TASK-XXX — <!-- descrição em uma linha do backlog -->
+**Observação:** <!-- contexto para a próxima sessão do Claude -->
 
 ---
 
-## Sessão 2026-03-29
+## [GEMINI] Sessão YYYY-MM-DD HH:MM
 
-**Data e hora de início:** 2026-03-29 09:00
-**Data e hora de fim:**    2026-03-29 11:45
-**Sprint:** Sprint 03
-**Branch:** feat/TASK-011-jwt-middleware
-**Executado por:** Claude Code
-
-### Tarefas Concluídas
-
-| ID       | Descrição resumida                                         | Score de Qualidade |
-|----------|------------------------------------------------------------|--------------------|
-| TASK-011 | Implementar validação de JWT em `src/middleware/auth.ts`   | 8.5/10             |
-
-### O que Falhou e Por Quê
-
-- Primeira tentativa de implementação alterou `src/routes/user.ts` por engano,
-  violando a regra de 1 arquivo por tarefa. Revertido e refeito com escopo correto.
+**Modo:** /discovery | /breakdown | /review | /sync
+**Sprint:** Sprint ##
+**Executado por:** Gemini CLI
 
 ### Decisões Tomadas
 
-1. Usar `jsonwebtoken` em vez de `jose` · biblioteca já presente no projeto, sem nova dependência · sem impacto de bundle
-2. `tenant_id` ausente retorna 403 (não 401) · semanticamente é autorização, não autenticação · alinha com padrão REST adotado nas demais rotas
+<!-- 
+  Decisões arquiteturais, modelagem de domínio ou mudanças no backlog.
+  Se nenhuma: "Nenhuma decisão nova."
+-->
+
+1. <!-- Decisão 1 · motivo · impacto -->
+
+### Bloqueios Identificados
+
+<!-- 
+  Novos impedimentos descobertos durante a análise ou revisão.
+  Se nenhum: "Nenhum bloqueio identificado."
+-->
 
 ### Próximo Passo
 
-**Tarefa:** TASK-012 — Adicionar extração de `tenant_id` no middleware de auth
-**Observação:** JWT já funcional. Focar apenas na extração do claim `tenant_id` e exposição via `req.tenantId`.
+**Tarefa:** TASK-XXX — <!-- descrição em uma linha do backlog -->
+**Observação:** <!-- o que o Claude deve focar na próxima implementação -->
 
 ---

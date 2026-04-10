@@ -20,11 +20,10 @@ description: Apply data modeling, migration, and pipeline standards. Use when de
 - Test migrations in a staging environment first
 
 ## Query Standards
-- Always use parameterized queries / ORM — never raw string interpolation
-- Add `EXPLAIN ANALYZE` for queries on large tables before production
 - Index columns used in frequent WHERE, JOIN, ORDER BY clauses
 - Avoid SELECT * in production queries — be explicit
 - Paginate large result sets — never return unbounded queries
+- For security rules on queries (parameterization, injection prevention), see security skill.
 
 ## Data Pipelines
 - Idempotency: re-running a pipeline should produce the same result

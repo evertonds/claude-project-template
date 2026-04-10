@@ -37,33 +37,26 @@ Block threshold: HIGH, CRITICAL
 
 ## Hybrid Workflow — Gemini
 
-Este projeto usa um fluxo híbrido entre Claude Code e Gemini. Consulte `GEMINI.md` para o contexto técnico completo do projeto.
-
-### Papel do Gemini Web (chat âncora)
-
-Consultar **antes** de implementar:
-- Decisões arquiteturais e trade-offs
-- Modelagem de domínio e DDD
-- Compliance e raciocínio regulatório
-- Análise de PDFs técnicos e diagramas
-- Brainstorming de soluções alternativas
+Este projeto usa um fluxo híbrido entre Claude Code (Engenheiro) e Gemini CLI (Arquiteto/Auditor). Consulte `GEMINI.md` para o contexto técnico completo do projeto.
 
 ### Papel do Gemini CLI (terminal)
 
-Invocar para análise **do codebase** com janela de 1M tokens:
-- Análise global do repositório sem chunkar
-- Revisão de segurança (OWASP, multi-tenancy, secrets)
-- Mapeamento de débito técnico e inconsistências
+Invocar para planejamento, decisões arquiteturais e análise profunda do codebase:
+- `/discovery` — elicitação de domínio e regras de negócio
+- `/breakdown` — decomposição de features em tarefas atômicas
+- `/adr` — registro de decisões arquiteturais
+- `/review` — revisão técnica de tarefas críticas (Gate 0)
+- `/sync` — atualização de contexto e logs de sessão
+- `/gemini-analyze` — análise global do repositório sem chunkar
+- `/gemini-security` — revisão de segurança ampla (OWASP, secrets)
 
-### Quando sugerir ativamente consultar o Gemini
+### Quando sugerir ativamente consultar o Gemini CLI
 
-Sugerir Gemini Web quando o usuário:
+Sugerir Gemini CLI quando o usuário:
 - Pergunta como estruturar/modelar algo não trivial
 - Levanta questões de compliance ou regulação
 - Está prestes a tomar uma decisão arquitetural que afeta múltiplos módulos
-
-Sugerir Gemini CLI quando:
-- O usuário quer revisão de segurança ampla do codebase
+- Quer uma revisão de segurança ampla do codebase
 - Há perguntas sobre consistência de padrões entre muitos arquivos
 
 ### Como tratar outputs prefixados
@@ -79,7 +72,7 @@ O usuário já validou o output antes de trazer — não questionar a fonte, imp
 
 - `/gemini-analyze` — análise global ou por módulo via Gemini CLI
 - `/gemini-security` — revisão de segurança do diff ou módulo
-- `/agents-sync` — gera bloco de atualização para os chats âncora
+- `/sync` — atualização de contexto (CONTEXT.md) e logs (SESSION_LOG.md)
 
 ## Known Errors
 <!-- Format: ### Error title / Cause / Solution -->
@@ -100,6 +93,7 @@ O usuário já validou o output antes de trazer — não questionar a fonte, imp
 
 MULTI_TENANT: <!-- true | false -->
 SECURITY_TOOL: <!-- ex: njsscan . && npm audit && tsc --noEmit -->
+ADR_PATH: <!-- ex: docs/decisions/ -->
 AUTH_METHOD: <!-- ex: JWT -->
 SENSITIVE_DATA: <!-- ex: email, nome do usuário -->
 

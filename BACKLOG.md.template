@@ -14,7 +14,7 @@
     diretamente pelo Claude Code sem tradução.
 
   AMBIGUIDADES REGISTRADAS:
-  - "Épico pai" assume que épicos são definidos externamente (Gemini Web).
+  - "Épico pai" assume que épicos são definidos externamente (Gemini CLI).
     O nome aqui é apenas referência textual, sem link obrigatório.
   - A ordem das tarefas define prioridade (topo = maior prioridade dentro
     do status PRONTO). Reordene conforme necessário.
